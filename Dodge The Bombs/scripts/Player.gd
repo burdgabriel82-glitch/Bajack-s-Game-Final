@@ -1,21 +1,4 @@
-extends CharacterBody2D
-
-const SPEED = 360.0
-const DASH_SPEED = 520.0
-const DASH_TIME = 0.18
-const DASH_COOLDOWN = 1.5
-
-var alive = true
-var player_name := "Player"
-var player_id := 1
-var player_color := Color(0, 0.8, 1, 1)
-var dash_timer := 0.0
-var dash_cooldown := 0.0
-
-func _ready():
-	add_to_group("players")
-	if has_node("ColorRect"):
-		$ColorRect.color = player_color
+const DASH_COOLDOWN = 5.0
 
 func _physics_process(delta):
 	if not alive:
@@ -66,22 +49,3 @@ func _physics_process(delta):
 	
 	velocity = move * current_speed
 	move_and_slide()
-
-func set_player_name(name_text: String):
-	player_name = name_text
-
-func get_player_name() -> String:
-	return player_name
-
-func set_player_id(id: int):
-	player_id = id
-
-func set_player_color(color: Color):
-	player_color = color
-	if has_node("ColorRect"):
-		$ColorRect.color = player_color
-
-func die():
-	alive = false
-	visible = false
-	set_physics_process(false)
