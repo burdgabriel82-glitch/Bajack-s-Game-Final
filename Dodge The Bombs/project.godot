@@ -11,6 +11,9 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/mode=2
 
+[autoload]
+NetworkManager="*res://scripts/NetworkManager.gd"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
