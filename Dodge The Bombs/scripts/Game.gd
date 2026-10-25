@@ -5,8 +5,8 @@ const BOMB_SCENE = preload("res://scenes/Bomb.tscn")
 
 const ARENA_WIDTH = 1280
 const ARENA_HEIGHT = 720
-const MIN_ACTIVE_BOMBS = 10
-const MAX_ACTIVE_BOMBS = 15
+const MIN_ACTIVE_BOMBS = 12
+const MAX_ACTIVE_BOMBS = 20
 
 const COLOR_OPTIONS = [
 	{"name": "Red", "color": Color(1.0, 0.32, 0.32)},
@@ -416,7 +416,7 @@ func start_bomb_spawner():
 		bomb_timer.queue_free()
 	
 	bomb_timer = Timer.new()
-	bomb_timer.wait_time = 0.28
+	bomb_timer.wait_time = 0.22
 	bomb_timer.autostart = true
 	bomb_timer.one_shot = false
 	bomb_timer.timeout.connect(_spawn_bomb)
@@ -451,7 +451,7 @@ func _spawn_bomb():
 		_spawn_single_bomb()
 		return
 	
-	if bombs.size() < MAX_ACTIVE_BOMBS and randf() < 0.8:
+	if bombs.size() < MAX_ACTIVE_BOMBS and randf() < 0.9:
 		_spawn_single_bomb()
 
 func find_valid_bomb_position() -> Vector2:
