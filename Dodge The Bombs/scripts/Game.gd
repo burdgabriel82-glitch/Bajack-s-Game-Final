@@ -218,13 +218,20 @@ func show_color_selection(mode: int):
 		start_button.pressed.connect(func(): start_match())
 		vbox.add_child(start_button)
 	else:
+		var p1_preview = ColorRect.new()
+		var p2_preview = ColorRect.new()
+		p1_preview.custom_minimum_size = Vector2(110, 110)
+		p2_preview.custom_minimum_size = Vector2(110, 110)
+		p1_preview.color = COLOR_OPTIONS[p1_color_index]["color"]
+		p2_preview.color = COLOR_OPTIONS[p2_color_index]["color"]
+		
 		var row = HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_CENTER
 		vbox.add_child(row)
 		
 		var p1_box = VBoxContainer.new(); p1_box.alignment = BoxContainer.ALIGNMENT_CENTER; row.add_child(p1_box)
 		var p1_label = Label.new(); p1_label.text = "Player 1"; p1_label.add_theme_font_size_override("font_size", 22); p1_box.add_child(p1_label)
-		var p1_preview = ColorRect.new(); p1_preview.custom_minimum_size = Vector2(110, 110); p1_preview.color = COLOR_OPTIONS[p1_color_index]["color"]; p1_box.add_child(p1_preview)
+		p1_box.add_child(p1_preview)
 		var p1_row = HBoxContainer.new(); p1_row.alignment = BoxContainer.ALIGNMENT_CENTER; p1_box.add_child(p1_row)
 		for i in range(COLOR_OPTIONS.size()):
 			var btn = make_menu_button(COLOR_OPTIONS[i]["name"], Vector2(90, 38), 15)
@@ -243,7 +250,7 @@ func show_color_selection(mode: int):
 		
 		var p2_box = VBoxContainer.new(); p2_box.alignment = BoxContainer.ALIGNMENT_CENTER; row.add_child(p2_box)
 		var p2_label = Label.new(); p2_label.text = "Player 2"; p2_label.add_theme_font_size_override("font_size", 22); p2_box.add_child(p2_label)
-		var p2_preview = ColorRect.new(); p2_preview.custom_minimum_size = Vector2(110, 110); p2_preview.color = COLOR_OPTIONS[p2_color_index]["color"]; p2_box.add_child(p2_preview)
+		p2_box.add_child(p2_preview)
 		var p2_row = HBoxContainer.new(); p2_row.alignment = BoxContainer.ALIGNMENT_CENTER; p2_box.add_child(p2_row)
 		for i in range(COLOR_OPTIONS.size()):
 			var btn = make_menu_button(COLOR_OPTIONS[i]["name"], Vector2(90, 38), 15)
