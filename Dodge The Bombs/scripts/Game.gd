@@ -5,7 +5,8 @@ const BOMB_SCENE = preload("res://scenes/Bomb.tscn")
 
 const ARENA_WIDTH = 1280
 const ARENA_HEIGHT = 720
-const MAX_ACTIVE_BOMBS = 6
+const MIN_ACTIVE_BOMBS = 10
+const MAX_ACTIVE_BOMBS = 15
 
 const COLOR_OPTIONS = [
 	{"name": "Red", "color": Color(1.0, 0.32, 0.32)},
@@ -233,11 +234,11 @@ func show_color_selection(mode: int):
 				p1_color_index = pick_index
 				p1_preview.color = COLOR_OPTIONS[p1_color_index]["color"]
 				if p1_color_index == p2_color_index:
-					var alt = get_next_available_color_index(p1_color_index)
+					var alt = get_next_available_color_index([p1_color_index])
 					if alt != -1:
 						p2_color_index = alt
-						p1_preview.color = COLOR_OPTIONS[p1_color_index]["color"]
-				)
+						p2_preview.color = COLOR_OPTIONS[p2_color_index]["color"]
+			)
 			p1_row.add_child(btn)
 		
 		var p2_box = VBoxContainer.new(); p2_box.alignment = BoxContainer.ALIGNMENT_CENTER; row.add_child(p2_box)
@@ -250,7 +251,7 @@ func show_color_selection(mode: int):
 			var pick_index = i
 			btn.pressed.connect(func():
 				if pick_index == p1_color_index:
-					var alt = get_next_available_color_index(pick_index)
+					var alt = get_next_available_color_index([p1_color_index])
 					if alt == -1:
 						return
 					p2_color_index = alt
@@ -268,9 +269,9 @@ func show_color_selection(mode: int):
 	back_button.pressed.connect(func(): show_main_menu())
 	vbox.add_child(back_button)
 
-func get_next_available_color_index(excluded_index: int) -> int:
+func get_next_available_color_index(excluded_indices: Array) -> int:
 	for i in range(COLOR_OPTIONS.size()):
-		if i != excluded_index:
+		if not excluded_indices.has(i):
 			return i
 	return -1
 
@@ -408,15 +409,16 @@ func start_bomb_spawner():
 		bomb_timer.queue_free()
 	
 	bomb_timer = Timer.new()
-	bomb_timer.wait_time = 0.5
+	bomb_timer.wait_time = 0.28
 	bomb_timer.autostart = true
 	bomb_timer.one_shot = false
 	bomb_timer.timeout.connect(_spawn_bomb)
 	world_root.add_child(bomb_timer)
+	
+	for i in range(randi_range(MIN_ACTIVE_BOMBS, MAX_ACTIVE_BOMBS)):
+		_spawn_single_bomb()
 
-func _spawn_bomb():
-	if not round_active:
-		return
+func _spawn_single_bomb():
 	if bombs.size() >= MAX_ACTIVE_BOMBS:
 		return
 	
@@ -433,6 +435,17 @@ func _spawn_bomb():
 		if bombs.has(bomb):
 			bombs.erase(bomb)
 	)
+
+func _spawn_bomb():
+	if not round_active:
+		return
+	
+	if bombs.size() < MIN_ACTIVE_BOMBS:
+		_spawn_single_bomb()
+		return
+	
+	if bombs.size() < MAX_ACTIVE_BOMBS and randf() < 0.8:
+		_spawn_single_bomb()
 
 func find_valid_bomb_position() -> Vector2:
 	for i in range(90):
@@ -460,6 +473,14 @@ func check_for_game_over():
 	for player in get_tree().get_nodes_in_group("players"):
 		if player.alive:
 			alive_players.append(player)
+	
+	if game_mode == GameMode.SOLO:
+		if alive_players.size() == 0:
+			round_active = false
+			if bomb_timer != null:
+				bomb_timer.stop()
+			show_results(alive_players)
+		return
 	
 	if alive_players.size() <= 1:
 		round_active = false
