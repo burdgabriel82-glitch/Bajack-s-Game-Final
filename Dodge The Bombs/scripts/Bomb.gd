@@ -1,6 +1,6 @@
 extends Area2D
 
-var countdown := 2.0
+var countdown := randf_range(3.0, 5.0)
 var explosion_radius := 120.0
 var exploded := false
 
